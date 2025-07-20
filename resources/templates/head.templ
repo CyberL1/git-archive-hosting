@@ -1,0 +1,17 @@
+{{define "head"}}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{.Title}} - Git Archive Hosting</title>
+</head>
+
+<body>
+    {{template "header" .}}
+    <main>
+        {{block "content" .}}{{end}}
+    </main>
+</body>
+
+</html>
+{{end}}

@@ -1,0 +1,10 @@
+{{define "content"}}
+<h1>Repositoris</h1>
+{{range .Repositories}}
+<div>
+    <h2>{{.Owner}}/{{.Name}}</h2>
+    <a href="/{{.Owner}}/{{.Name}}">View Repository</a>
+    <a href="{{.OriginalUrl}}" target="_blank">View Original</a>
+</div>
+{{end}}
+{{end}}

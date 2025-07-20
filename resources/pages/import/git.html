@@ -1,0 +1,25 @@
+{{define "content"}}
+<h1>Import a Git Repository</h1>
+<form id="import-form">
+    <label for="repo-url">Repository URL:</label>
+    <input type="text" id="repo-url" name="repo-url" required>
+    <button type="submit">Import</button>
+</form>
+<script>
+    document.getElementById("import-form").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const repositoryUrl = document.getElementById("repo-url").value;
+        const response = await fetch("/api/import/git", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ repositoryUrl })
+        });
+        if (response.ok) {
+            location.href = "/";
+        } else {
+            alert("Repository import failed. Please check the URL and try again.");
+        }
+    });
+</script>
+{{end}}
