@@ -15,5 +15,7 @@ func NewHandler() *Handler {
 
 func (h *Handler) RegisterRoutes(r *gin.RouterGroup) {
 	r.POST("/import/git", importRoutes.ImportGitRepo)
-	r.GET("/repos", reposRoutes.GetAllRepos)
+
+	repos := r.Group("/repos")
+	repos.GET("/", reposRoutes.GetAllRepos)
 }
