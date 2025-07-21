@@ -25,6 +25,10 @@ func main() {
 	// Migrate DB
 	dbClient.Migrate()
 
+	if !utils.IsDevMode() {
+		gin.SetMode("release")
+	}
+
 	r := gin.Default()
 
 	web.NewHandler().RegisterRoutes(r.Group("/"))

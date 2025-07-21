@@ -5,7 +5,6 @@ import (
 	"html/template"
 	"io/fs"
 	"net/http"
-	"os"
 	"path/filepath"
 )
 
@@ -14,7 +13,7 @@ func RenderPage(w http.ResponseWriter, pageFile string, data any) {
 
 	var tmpl *template.Template
 	var err error
-	if os.Getenv("DEV_MODE") == "true" {
+	if IsDevMode() {
 		tmpl, err = template.ParseGlob("resources/templates/*.templ")
 		if err != nil {
 			http.Error(w, "Template parsing error: "+err.Error(), http.StatusInternalServerError)
