@@ -1,34 +1,44 @@
 {{define "header"}}
 <header>
-    <h1>Git Archive Hosting</h1>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/import/git">Import a repo</a></li>
-        </ul>
+    <nav class="navbar">
+        <div class="left">
+            <a href="/" class="logo">Git Archive Hosting</a>
+            <a href="https://github.com/CyberL1/git-archive-hosting" target="_blank">Github repository</a>
+        </div>
+        <div class="right">
+            <a href="/import/git">÷</a>
+        </div>
     </nav>
 </header>
 
 <style>
     header {
-        background-color: #f8f9fa;
-        padding: 10px;
-        text-align: center;
+        background-color: #24292e;
+        padding: 10px 20px;
     }
 
-    nav ul {
-        list-style-type: none;
-        padding: 0;
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0 auto;
     }
 
-    nav ul li {
-        display: inline;
-        margin-right: 15px;
-    }
-
-    nav ul li a {
+    .navbar a {
+        color: #ffffff;
         text-decoration: none;
-        color: #007bff;
+        margin-right: 20px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .navbar>.left>a.logo {
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .navbar a:hover {
+        text-decoration: underline;
     }
 </style>
 {{end}}
