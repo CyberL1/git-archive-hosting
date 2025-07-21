@@ -6,6 +6,7 @@ import (
 	"garg/utils"
 	"net/http"
 	"path/filepath"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"gopkg.in/src-d/go-git.v4"
@@ -15,7 +16,7 @@ func GetHead(c *gin.Context) {
 	repoOwner := c.Param("owner")
 	repoName := c.Param("repo")
 
-	repo, err := git.PlainOpen(filepath.Join(constants.RepositoriesDir, repoOwner, utils.AppendDotGitExt(repoName)))
+	repo, err := git.PlainOpen(filepath.Join(constants.RepositoriesDir, strings.ToLower(repoOwner), utils.AppendDotGitExt(strings.ToLower(repoName))))
 	if err != nil {
 		c.String(http.StatusInternalServerError, fmt.Sprintf("Failed to open repository: %v", err))
 		return

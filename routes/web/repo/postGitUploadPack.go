@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,7 +16,7 @@ func PostGitUploadPack(c *gin.Context) {
 	repoOwner := c.Param("owner")
 	repoName := c.Param("repo")
 
-	repoPath := filepath.Join(constants.RepositoriesDir, repoOwner, utils.AppendDotGitExt(repoName))
+	repoPath := filepath.Join(constants.RepositoriesDir, strings.ToLower(repoOwner), utils.AppendDotGitExt(strings.ToLower(repoName)))
 
 	c.Header("Content-Type", "application/x-git-upload-pack-result")
 	c.Header("Cache-Control", "no-cache")
