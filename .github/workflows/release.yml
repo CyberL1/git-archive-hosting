@@ -37,12 +37,12 @@ jobs:
           export GOARCH=${{ matrix.arch }}
           go build -ldflags "-s -w -X garg/constants.Version=${{ env.RELEASE_VERSION }}"
       - name: Pack binary
-        run: zip git-archive-hosting-${{ matrix.os }}-${{ matrix.arch }}.zip git-archive-hosting${{ matrix.os == 'windows' && '.exe' || '' }}
+        run: zip garg-${{ matrix.os }}-${{ matrix.arch }}.zip garg${{ matrix.os == 'windows' && '.exe' || '' }}
       - name: Create release
         uses: ncipollo/release-action@v1.15.0
         with:
           tag: ${{ env.RELEASE_VERSION }}
-          artifacts: git-archive-hosting-${{ matrix.os }}-${{ matrix.arch }}.zip
+          artifacts: garg-${{ matrix.os }}-${{ matrix.arch }}.zip
           allowUpdates: true
   build-and-push-docker-image:
     name: Build and push docker image
