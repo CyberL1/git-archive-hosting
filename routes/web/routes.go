@@ -19,7 +19,7 @@ func (h *Handler) RegisterRoutes(r *gin.RouterGroup) {
 	r.GET("/import/git", importRoutes.ImportGitRepo)
 
 	repo := r.Group("/:owner/:repo")
-	repo.GET("/", repoRoutes.View)
+	// repo.GET("/", repoRoutes.View)
 
 	repo.Use(webMiddlewares.GitSmartHTTPMiddleware())
 	repo.GET("/HEAD", repoRoutes.GetHead)
