@@ -18,4 +18,5 @@ func (h *Handler) RegisterRoutes(r *gin.RouterGroup) {
 
 	repos := r.Group("/repos")
 	repos.GET("/", reposRoutes.GetAllRepos)
+	repos.GET("/:owner/:repo", reposRoutes.GetSingleRepo)
 }
