@@ -52,7 +52,7 @@ func ImportGitRepo(c *gin.Context) {
 	repoOwner := strings.Split(body.RepositoryUrl, "/")[3]
 	repoName := strings.Split(body.RepositoryUrl, "/")[4]
 
-	_, err := git.PlainClone(filepath.Join(constants.RepositoriesDir, repoOwner, utils.AppendDotGitExt(repoName)), true, &git.CloneOptions{
+	_, err := git.PlainClone(filepath.Join(constants.RepositoriesDir, strings.ToLower(repoOwner), utils.AppendDotGitExt(strings.ToLower(repoName))), true, &git.CloneOptions{
 		URL: body.RepositoryUrl,
 	})
 
@@ -61,7 +61,7 @@ func ImportGitRepo(c *gin.Context) {
 			Code:    types.ApiErrorCodeRepositoryCloneFailed,
 			Message: types.ApiErrorMessageRepositoryCloneFailed,
 		}
-		
+
 		c.JSON(http.StatusInternalServerError, response)
 		return
 	}
