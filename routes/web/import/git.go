@@ -2,11 +2,12 @@ package importRoutes
 
 import (
 	"garg/utils"
-	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-func ImportGitRepo(w http.ResponseWriter, r *http.Request) {
-	utils.RenderPage(w, "import/git", map[string]interface{}{
+func ImportGitRepo(c *gin.Context) {
+	utils.RenderPage(c.Writer, "import/git", map[string]interface{}{
 		"Title": "Import a Repository from Git",
 	})
 }

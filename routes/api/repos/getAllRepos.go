@@ -2,13 +2,14 @@ package reposRoutes
 
 import (
 	"context"
-	"encoding/json"
 	dbClient "garg/db"
 	"garg/types"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-func GetAllRepos(w http.ResponseWriter, r *http.Request) {
+func GetAllRepos(c *gin.Context) {
 	client, _ := dbClient.GetClient()
 	repos, _ := client.ListRepos(context.Background())
 
@@ -19,12 +20,11 @@ func GetAllRepos(w http.ResponseWriter, r *http.Request) {
 			Owner:       repo.Owner,
 			Name:        repo.Name,
 			OriginalUrl: repo.OriginalUrl,
-			CreatedAt: repo.CreatedAt.String(),
+			CreatedAt:   repo.CreatedAt.String(),
 		}
 
 		response = append(response, repo)
 	}
 
-	w.Header().Set("content-type", "application/json")
-	json.NewEncoder(w).Encode(response)
+	c.JSON(http.StatusOK, response)
 }

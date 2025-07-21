@@ -6,8 +6,11 @@ import (
 	dbClient "garg/db"
 	"garg/routes/api"
 	"garg/routes/web"
+	"garg/utils"
 	"net/http"
 	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -22,10 +25,16 @@ func main() {
 	// Migrate DB
 	dbClient.Migrate()
 
-	r := http.NewServeMux()
+	r := gin.Default()
 
-	r.Handle("/", web.NewHandler().RegisterRoutes())
-	r.Handle("/api/", http.StripPrefix("/api", api.NewHandler().RegisterRoutes()))
+	web.NewHandler().RegisterRoutes(r.Group("/"))
+	api.NewHandler().RegisterRoutes(r.Group("/api"))
+
+	r.NoRoute(func(c *gin.Context) {
+		utils.RenderPage(c.Writer, "404", map[string]interface{}{
+			"Title": "Page not found",
+		})
+	})
 
 	println("Git Archive Hosting started on port :8080")
 	if err := http.ListenAndServe(":8080", r); err != nil {

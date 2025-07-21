@@ -13,19 +13,19 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"gopkg.in/src-d/go-git.v4"
 )
 
-func ImportGitRepo(w http.ResponseWriter, r *http.Request) {
+func ImportGitRepo(c *gin.Context) {
 	var body types.ApiRepositoryImportRequest
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+	if err := json.NewDecoder(c.Request.Body).Decode(&body); err != nil {
 		response := types.ApiErrorResponse{
 			Code:    types.ApiErrorCodeInvalidRequestBody,
 			Message: types.ApiErrorMessageInvalidRequestBody,
 		}
 
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(response)
+		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
@@ -35,8 +35,7 @@ func ImportGitRepo(w http.ResponseWriter, r *http.Request) {
 			Message: types.ApiErrorMessageRepositoryUrlRequired,
 		}
 
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(response)
+		c.JSON(http.StatusInternalServerError, response)
 		return
 	}
 
@@ -46,8 +45,7 @@ func ImportGitRepo(w http.ResponseWriter, r *http.Request) {
 			Message: types.ApiErrorMessageRepositoryUrlBadSchema,
 		}
 
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(response)
+		c.JSON(http.StatusInternalServerError, response)
 		return
 	}
 
@@ -63,9 +61,8 @@ func ImportGitRepo(w http.ResponseWriter, r *http.Request) {
 			Code:    types.ApiErrorCodeRepositoryCloneFailed,
 			Message: types.ApiErrorMessageRepositoryCloneFailed,
 		}
-
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(response)
+		
+		c.JSON(http.StatusInternalServerError, response)
 		return
 	}
 
@@ -77,6 +74,5 @@ func ImportGitRepo(w http.ResponseWriter, r *http.Request) {
 		CreatedAt:   time.Now(),
 	})
 
-	w.Header().Set("content-type", "application/json")
-	json.NewEncoder(w).Encode(createdRepo)
+	c.JSON(http.StatusOK, createdRepo)
 }

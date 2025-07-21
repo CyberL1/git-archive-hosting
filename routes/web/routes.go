@@ -2,7 +2,8 @@ package web
 
 import (
 	importRoutes "garg/routes/web/import"
-	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Handler struct{}
@@ -11,11 +12,7 @@ func NewHandler() *Handler {
 	return &Handler{}
 }
 
-func (h *Handler) RegisterRoutes() *http.ServeMux {
-	r := http.NewServeMux()
-
-	r.HandleFunc("GET /", dashboard)
-	r.HandleFunc("GET /import/git", importRoutes.ImportGitRepo)
-
-	return r
+func (h *Handler) RegisterRoutes(r *gin.RouterGroup) {
+	r.GET("/", dashboard)
+	r.GET("/import/git", importRoutes.ImportGitRepo)
 }
