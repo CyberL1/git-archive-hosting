@@ -5,10 +5,10 @@ SELECT * FROM repos;
 SELECT * FROM repos WHERE id = ?;
 
 -- name: GetRepoByOwner :one
-SELECT * FROM repos WHERE owner = ?;
+SELECT * FROM repos WHERE LOWER(owner) = LOWER(sqlc.arg(owner));
 
 -- name: GetRepoByFullName :one
-SELECT * FROM repos WHERE owner = ? AND name = ?;
+SELECT * FROM repos WHERE LOWER(owner) = LOWER(sqlc.arg(owner)) AND LOWER(name) = LOWER(sqlc.arg(name));
 
 -- name: CreateRepo :one
 INSERT INTO repos (owner, name, original_url, created_at) VALUES (?, ?, ?, ?)

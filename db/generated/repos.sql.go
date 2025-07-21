@@ -41,7 +41,7 @@ func (q *Queries) CreateRepo(ctx context.Context, arg CreateRepoParams) (Repo, e
 }
 
 const getRepoByFullName = `-- name: GetRepoByFullName :one
-SELECT id, owner, name, original_url, created_at FROM repos WHERE owner = ? AND name = ?
+SELECT id, owner, name, original_url, created_at FROM repos WHERE LOWER(owner) = LOWER(?1) AND LOWER(name) = LOWER(?2)
 `
 
 type GetRepoByFullNameParams struct {
@@ -80,7 +80,7 @@ func (q *Queries) GetRepoById(ctx context.Context, id int64) (Repo, error) {
 }
 
 const getRepoByOwner = `-- name: GetRepoByOwner :one
-SELECT id, owner, name, original_url, created_at FROM repos WHERE owner = ?
+SELECT id, owner, name, original_url, created_at FROM repos WHERE LOWER(owner) = LOWER(?1)
 `
 
 func (q *Queries) GetRepoByOwner(ctx context.Context, owner string) (Repo, error) {
