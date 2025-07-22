@@ -15,10 +15,20 @@ func GetSingleRepo(c *gin.Context) {
 	repoName := c.Param("repo")
 
 	client, _ := dbClient.GetClient()
-	repo, _ := client.GetRepoByFullName(context.Background(), db.GetRepoByFullNameParams{
+	repo, err := client.GetRepoByFullName(context.Background(), db.GetRepoByFullNameParams{
 		Owner: repoOwner,
 		Name:  repoName,
 	})
+
+	if err != nil {
+		response := types.ApiErrorResponse{
+			Code:    types.ApiErrorCodeNotFound,
+			Message: types.ApiErrorMessageRepositoryNotFound,
+		}
+
+		c.JSON(http.StatusNotFound, response)
+		return
+	}
 
 	response := types.ApiRepositoryResponse{
 		Id:          repo.ID,

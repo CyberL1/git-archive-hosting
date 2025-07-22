@@ -21,6 +21,13 @@ func View(c *gin.Context) {
 	}
 
 	reposReq, _ := http.Get(fmt.Sprintf("%s/api/repos/%s/%s", "http://localhost:8080", repoOwner, repoName))
+	if reposReq.StatusCode == 404 {
+		utils.RenderPage(c.Writer, "404", map[string]interface{}{
+			"Title": "Page not found",
+		})
+		return
+	}
+
 	body, _ := io.ReadAll(reposReq.Body)
 
 	var repoData types.ApiRepositoryResponse
