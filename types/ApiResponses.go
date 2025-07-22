@@ -12,4 +12,5 @@ type ApiRepositoryResponse struct {
 	Name        string `json:"name"`
 	CreatedAt   string `json:"createdAt"`
 	OriginalUrl string `json:"originalUrl"`
+	Source      string `json:"source"`
 }

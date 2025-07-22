@@ -1,5 +1,5 @@
 {{define "content"}}
-Repo full name: {{.Repository.Owner}}/{{.Repository.Name}}<br>
+Repo full name: {{.Repository.Source}}/{{.Repository.Owner}}/{{.Repository.Name}}<br>
 Created at: {{.Repository.CreatedAt}}<br><br>
-Clone command: git clone http://localhost:8080/{{.Repository.Owner}}/{{.Repository.Name}}.git
+Clone command: git clone http://localhost:8080/{{.Repository.Source}}/{{.Repository.Owner}}/{{.Repository.Name}}.git
 {{end}}

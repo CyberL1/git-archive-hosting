@@ -49,10 +49,11 @@ func ImportGitRepo(c *gin.Context) {
 		return
 	}
 
+	repoSource := strings.Split(body.RepositoryUrl, "/")[2]
 	repoOwner := strings.Split(body.RepositoryUrl, "/")[3]
 	repoName := strings.Split(body.RepositoryUrl, "/")[4]
 
-	_, err := git.PlainClone(filepath.Join(constants.RepositoriesDir, strings.ToLower(repoOwner), utils.AppendDotGitExt(strings.ToLower(repoName))), true, &git.CloneOptions{
+	_, err := git.PlainClone(filepath.Join(constants.RepositoriesDir, strings.ToLower(repoSource), strings.ToLower(repoOwner), utils.AppendDotGitExt(strings.ToLower(repoName))), true, &git.CloneOptions{
 		URL: body.RepositoryUrl,
 	})
 
@@ -72,6 +73,7 @@ func ImportGitRepo(c *gin.Context) {
 		Name:        utils.RemoveDotGitExt(repoName),
 		OriginalUrl: utils.AppendDotGitExt(body.RepositoryUrl),
 		CreatedAt:   time.Now(),
+		Source:      repoSource,
 	})
 
 	c.JSON(http.StatusOK, createdRepo)

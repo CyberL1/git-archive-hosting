@@ -13,6 +13,7 @@ import (
 )
 
 func View(c *gin.Context) {
+	repoSource := c.Param("source")
 	repoOwner := c.Param("owner")
 	repoName := c.Param("repo")
 
@@ -20,7 +21,7 @@ func View(c *gin.Context) {
 		c.Redirect(http.StatusMovedPermanently, fmt.Sprintf("/%s/%s", repoOwner, utils.RemoveDotGitExt(repoName)))
 	}
 
-	reposReq, _ := http.Get(fmt.Sprintf("%s/api/repos/%s/%s", "http://localhost:8080", repoOwner, repoName))
+	reposReq, _ := http.Get(fmt.Sprintf("%s/api/repos/%s/%s/%s", "http://localhost:8080", repoSource, repoOwner, repoName))
 	if reposReq.StatusCode == 404 {
 		utils.RenderPage(c.Writer, "404", map[string]interface{}{
 			"Title": "Page not found",

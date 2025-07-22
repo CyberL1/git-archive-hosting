@@ -9,9 +9,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetAllRepos(c *gin.Context) {
+func GetReposBySource(c *gin.Context) {
 	client, _ := dbClient.GetClient()
-	repos, _ := client.ListRepos(context.Background())
+	repos, _ := client.ListReposBySource(context.Background(), c.Param("source"))
 
 	var response []types.ApiRepositoryResponse
 	for _, repo := range repos {

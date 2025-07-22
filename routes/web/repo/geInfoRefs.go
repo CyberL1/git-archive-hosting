@@ -20,10 +20,11 @@ func GetInfoRefs(c *gin.Context) {
 		return
 	}
 
+	repoSource := c.Param("source")
 	repoOwner := c.Param("owner")
 	repoName := c.Param("repo")
 
-	repoPath := filepath.Join(constants.RepositoriesDir, strings.ToLower(repoOwner), utils.AppendDotGitExt(strings.ToLower(repoName)))
+	repoPath := filepath.Join(constants.RepositoriesDir, strings.ToLower(repoSource), strings.ToLower(repoOwner), utils.AppendDotGitExt(strings.ToLower(repoName)))
 
 	repo, err := git.PlainOpen(repoPath)
 	if err != nil {

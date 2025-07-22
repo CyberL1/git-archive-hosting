@@ -13,10 +13,11 @@ import (
 )
 
 func PostGitUploadPack(c *gin.Context) {
+	repoSource := c.Param("source")
 	repoOwner := c.Param("owner")
 	repoName := c.Param("repo")
 
-	repoPath := filepath.Join(constants.RepositoriesDir, strings.ToLower(repoOwner), utils.AppendDotGitExt(strings.ToLower(repoName)))
+	repoPath := filepath.Join(constants.RepositoriesDir, strings.ToLower(repoSource), strings.ToLower(repoOwner), utils.AppendDotGitExt(strings.ToLower(repoName)))
 
 	c.Header("Content-Type", "application/x-git-upload-pack-result")
 	c.Header("Cache-Control", "no-cache")

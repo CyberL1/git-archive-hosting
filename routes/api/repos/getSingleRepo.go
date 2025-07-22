@@ -36,6 +36,7 @@ func GetSingleRepo(c *gin.Context) {
 		Name:        repo.Name,
 		OriginalUrl: repo.OriginalUrl,
 		CreatedAt:   repo.CreatedAt.String(),
+		Source:      repo.Source,
 	}
 
 	c.JSON(http.StatusOK, response)

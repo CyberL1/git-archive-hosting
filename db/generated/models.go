@@ -14,4 +14,5 @@ type Repo struct {
 	Name        string
 	OriginalUrl string
 	CreatedAt   time.Time
+	Source      string
 }

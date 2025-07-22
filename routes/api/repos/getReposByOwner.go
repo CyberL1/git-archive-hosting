@@ -3,15 +3,19 @@ package reposRoutes
 import (
 	"context"
 	dbClient "garg/db"
+	db "garg/db/generated"
 	"garg/types"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func GetAllRepos(c *gin.Context) {
+func GetReposByOwner(c *gin.Context) {
 	client, _ := dbClient.GetClient()
-	repos, _ := client.ListRepos(context.Background())
+	repos, _ := client.ListReposBySourceAndOwner(context.Background(), db.ListReposBySourceAndOwnerParams{
+		Source: c.Param("source"),
+		Owner: c.Param("owner"),
+	})
 
 	var response []types.ApiRepositoryResponse
 	for _, repo := range repos {
