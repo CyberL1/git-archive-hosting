@@ -61,6 +61,7 @@ func ImportGitRepo(c *gin.Context) {
 		response := types.ApiErrorResponse{
 			Code:    types.ApiErrorCodeRepositoryCloneFailed,
 			Message: types.ApiErrorMessageRepositoryCloneFailed,
+			Error:   err.Error(),
 		}
 
 		c.JSON(http.StatusInternalServerError, response)
@@ -76,5 +77,14 @@ func ImportGitRepo(c *gin.Context) {
 		Source:      repoSource,
 	})
 
-	c.JSON(http.StatusOK, createdRepo)
+	response := types.ApiRepositoryResponse{
+		Id:          createdRepo.ID,
+		Owner:       createdRepo.Owner,
+		Name:        createdRepo.Name,
+		CreatedAt:   createdRepo.CreatedAt.String(),
+		OriginalUrl: createdRepo.OriginalUrl,
+		Source:      createdRepo.Source,
+	}
+
+	c.JSON(http.StatusOK, response)
 }
