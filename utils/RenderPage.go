@@ -14,7 +14,7 @@ func RenderPage(w http.ResponseWriter, pageFile string, data any) {
 	var tmpl *template.Template
 	var err error
 	if IsDevMode() {
-		tmpl, err = template.ParseGlob("resources/templates/*.templ")
+		tmpl, err = template.ParseGlob("resources/templates/*.html")
 		if err != nil {
 			http.Error(w, "Template parsing error: "+err.Error(), http.StatusInternalServerError)
 			return
@@ -32,7 +32,7 @@ func RenderPage(w http.ResponseWriter, pageFile string, data any) {
 			return
 		}
 
-		tmpl, err = template.ParseFS(rootFS, "templates/*.templ", "pages/"+pageFile)
+		tmpl, err = template.ParseFS(rootFS, "templates/*.html", "pages/"+pageFile)
 		if err != nil {
 			http.Error(w, "Template parsing error: "+err.Error(), http.StatusInternalServerError)
 			return
