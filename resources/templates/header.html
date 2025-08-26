@@ -6,7 +6,7 @@
             <a href="https://github.com/CyberL1/git-archive-hosting" target="_blank">Github repository</a>
         </div>
         <div class="right">
-            <a href="/import/git">÷</a>
+            <a href="/import/git" class="button">Add repository</a>
         </div>
     </nav>
 </header>
@@ -39,6 +39,21 @@
 
     .navbar a:hover {
         text-decoration: underline;
+    }
+
+    nav a.button {
+        background: #4caf50;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    nav a.button:hover {
+        background: #45a049;
+        text-decoration: none;
     }
 </style>
 {{end}}
