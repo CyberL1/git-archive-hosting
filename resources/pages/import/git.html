@@ -2,7 +2,11 @@
 <h1>Import a Git Repository</h1>
 <form id="import-form">
     <label for="repo-url">Repository URL:</label>
-    <input type="text" id="repo-url" name="repo-url" required>
+    <input type="text" id="repo-url" name="repo-url" required><br>
+    <label for="auth-user">Username:</label>
+    <input type="text" id="auth-user" name="auth-user"><br>
+    <label for="auth-password">Password:</label>
+    <input type="password" id="auth-password" name="auth-password"><br>
     <button type="submit">Import</button>
 </form>
 <script>
@@ -10,10 +14,13 @@
         e.preventDefault();
 
         const repositoryUrl = document.getElementById("repo-url").value;
+        const username = document.getElementById("auth-user").value;
+        const password = document.getElementById("auth-password").value;
+
         const response = await fetch("/api/import/git", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ repositoryUrl })
+            body: JSON.stringify({ repositoryUrl, username, password })
         });
         if (response.ok) {
             location.href = "/";
