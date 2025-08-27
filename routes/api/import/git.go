@@ -51,9 +51,13 @@ func ImportGitRepo(c *gin.Context) {
 	repoOwner := strings.Split(body.RepositoryUrl, "/")[3]
 	repoName := strings.Split(body.RepositoryUrl, "/")[4]
 
-	var source sources.Git
+	source := sources.Git{
+		Username: body.Username,
+		Password: body.Password,
+	}
+
 	err := source.Import(types.Repo{
-		Url:  body.RepositoryUrl,
+		Url: body.RepositoryUrl,
 	})
 
 	if err != nil {

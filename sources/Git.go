@@ -9,9 +9,13 @@ import (
 	"strings"
 
 	"gopkg.in/src-d/go-git.v4"
+	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
 )
 
-type Git struct{}
+type Git struct {
+	Username string
+	Password string
+}
 
 func (g *Git) Import(repo types.Repo) error {
 	repoSource := strings.Split(repo.Url, "/")[2]
@@ -20,9 +24,16 @@ func (g *Git) Import(repo types.Repo) error {
 
 	fmt.Println("Importing repository:", repo.Url)
 
-	_, err := git.PlainClone(filepath.Join(constants.RepositoriesDir, strings.ToLower(repoSource), strings.ToLower(repoOwner), utils.AppendDotGitExt(strings.ToLower(repoName))), true, &git.CloneOptions{
-		URL: repo.Url,
-	})
+	cloneOptions := &git.CloneOptions{URL: repo.Url}
+
+	if g.Username != "" && g.Password != "" {
+		cloneOptions.Auth = &http.BasicAuth{
+			Username: g.Username,
+			Password: g.Password,
+		}
+	}
+
+	_, err := git.PlainClone(filepath.Join(constants.RepositoriesDir, strings.ToLower(repoSource), strings.ToLower(repoOwner), utils.AppendDotGitExt(strings.ToLower(repoName))), true, cloneOptions)
 	if err != nil {
 		fmt.Println("Import failed:", err)
 		return err
