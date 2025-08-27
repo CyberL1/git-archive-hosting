@@ -3,18 +3,16 @@ package importRoutes
 import (
 	"context"
 	"encoding/json"
-	"garg/constants"
 	dbClient "garg/db"
 	db "garg/db/generated"
+	"garg/sources"
 	"garg/types"
 	"garg/utils"
 	"net/http"
-	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"gopkg.in/src-d/go-git.v4"
 )
 
 func ImportGitRepo(c *gin.Context) {
@@ -53,8 +51,9 @@ func ImportGitRepo(c *gin.Context) {
 	repoOwner := strings.Split(body.RepositoryUrl, "/")[3]
 	repoName := strings.Split(body.RepositoryUrl, "/")[4]
 
-	_, err := git.PlainClone(filepath.Join(constants.RepositoriesDir, strings.ToLower(repoSource), strings.ToLower(repoOwner), utils.AppendDotGitExt(strings.ToLower(repoName))), true, &git.CloneOptions{
-		URL: body.RepositoryUrl,
+	var source sources.Git
+	err := source.Import(types.Repo{
+		Url:  body.RepositoryUrl,
 	})
 
 	if err != nil {
