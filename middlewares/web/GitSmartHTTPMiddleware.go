@@ -9,7 +9,7 @@ import (
 
 func GitSmartHTTPMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if !strings.Contains(c.Request.UserAgent(), "git/") {
+		if !strings.HasPrefix(c.Request.UserAgent(), "git/") {
 			c.String(http.StatusForbidden, "Access denied: Not a git client")
 			c.Abort()
 			return
