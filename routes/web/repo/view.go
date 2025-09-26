@@ -18,7 +18,7 @@ func View(c *gin.Context) {
 	repoName := c.Param("repo")
 
 	if strings.HasSuffix(repoName, ".git") {
-		c.Redirect(http.StatusMovedPermanently, fmt.Sprintf("/%s/%s", repoOwner, utils.RemoveDotGitExt(repoName)))
+		c.Redirect(http.StatusMovedPermanently, fmt.Sprintf("/%s/%s/%s", repoSource, repoOwner, utils.RemoveDotGitExt(repoName)))
 	}
 
 	reposReq, _ := http.Get(fmt.Sprintf("%s/api/repos/%s/%s/%s", "http://localhost:8080", repoSource, repoOwner, repoName))
