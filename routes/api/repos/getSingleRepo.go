@@ -5,6 +5,7 @@ import (
 	dbClient "garg/db"
 	db "garg/db/generated"
 	"garg/types"
+	"garg/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,7 +18,7 @@ func GetSingleRepo(c *gin.Context) {
 	client, _ := dbClient.GetClient()
 	repo, err := client.GetRepoByFullName(context.Background(), db.GetRepoByFullNameParams{
 		Owner: repoOwner,
-		Name:  repoName,
+		Name:  utils.RemoveDotGitExt(repoName),
 	})
 
 	if err != nil {
