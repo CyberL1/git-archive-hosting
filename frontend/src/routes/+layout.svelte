@@ -1,0 +1,83 @@
+<script>
+	const title = "Home";
+</script>
+
+<svelte:head>
+	<title>{title} - Git Archive Hosting</title>
+</svelte:head>
+
+<header>
+	<nav class="navbar">
+		<div class="left">
+			<a href="/" class="logo">Git Archive Hosting</a>
+			<a href="https://github.com/CyberL1/git-archive-hosting" target="_blank"
+				>Github repository</a
+			>
+		</div>
+		<div class="right">
+			<a href="/import/git" class="button">Add repository</a>
+		</div>
+	</nav>
+</header>
+
+<main>
+	<slot />
+</main>
+
+<style>
+	:global(body) {
+		margin: 0;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+			"Helvetica Neue", Arial, sans-serif;
+		background: #f0f0f0;
+	}
+
+	main {
+		margin-top: 15px;
+		margin-left: 15px;
+	}
+
+	header {
+		background-color: #24292e;
+		padding: 10px 20px;
+	}
+
+	.navbar {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin: 0 auto;
+	}
+
+	.navbar a {
+		color: #ffffff;
+		text-decoration: none;
+		margin-right: 20px;
+		font-size: 14px;
+		line-height: 1.5;
+	}
+
+	.navbar > .left > a.logo {
+		font-weight: bold;
+		font-size: 16px;
+	}
+
+	.navbar a:hover {
+		text-decoration: underline;
+	}
+
+	nav a.button {
+		background: #4caf50;
+		color: white;
+		border: none;
+		padding: 0.5rem 1rem;
+		border-radius: 4px;
+		cursor: pointer;
+		text-decoration: none;
+	}
+
+	nav a.button:hover {
+		background: #45a049;
+		text-decoration: none;
+	}
+</style>

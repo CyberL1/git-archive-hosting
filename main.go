@@ -6,10 +6,14 @@ import (
 	"garg/constants"
 	dbClient "garg/db"
 	db "garg/db/generated"
+	"garg/frontend"
 	"garg/routes/api"
 	"garg/routes/web"
 	"garg/utils"
+	"mime"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -58,20 +62,34 @@ func main() {
 		fmt.Printf("Migrated %s\n", repo.Owner)
 	}
 
-	if !utils.IsDevMode() {
+	if utils.IsDevMode() {
+		os.Setenv("DOMAIN", "localhost:8080")
+	} else {
 		gin.SetMode("release")
 	}
 
 	r := gin.Default()
 
+	r.NoRoute(func(c *gin.Context) {
+		if os.Getenv("DEV_MODE") == "true" {
+			frontendUrl, _ := url.Parse("http://localhost:5173")
+			httputil.NewSingleHostReverseProxy(frontendUrl).ServeHTTP(c.Writer, c.Request)
+		} else {
+			path := c.Request.URL.Path[1:]
+
+			if _, err := frontend.BuildDir.ReadFile(filepath.Join("build", path)); err != nil {
+				path = "index.html"
+			}
+
+			fileContent, _ := frontend.BuildDir.ReadFile(filepath.Join("build", path))
+
+			c.Header("Content-Type", mime.TypeByExtension(filepath.Ext(path)))
+			c.String(200, string(fileContent))
+		}
+	})
+
 	web.NewHandler().RegisterRoutes(r.Group("/"))
 	api.NewHandler().RegisterRoutes(r.Group("/api"))
-
-	r.NoRoute(func(c *gin.Context) {
-		utils.RenderPage(c.Writer, "404", map[string]interface{}{
-			"Title": "Page not found",
-		})
-	})
 
 	println("Git Archive Hosting started on port :8080")
 	if err := http.ListenAndServe(":8080", r); err != nil {
