@@ -12,13 +12,15 @@ import (
 )
 
 func GetSingleRepo(c *gin.Context) {
+	repoSource := c.Param("source")
 	repoOwner := c.Param("owner")
 	repoName := c.Param("repo")
 
 	client, _ := dbClient.GetClient()
 	repo, err := client.GetRepoByFullName(context.Background(), db.GetRepoByFullNameParams{
-		Owner: repoOwner,
-		Name:  utils.RemoveDotGitExt(repoName),
+		Source: repoSource,
+		Owner:  repoOwner,
+		Name:   utils.RemoveDotGitExt(repoName),
 	})
 
 	if err != nil {
