@@ -17,8 +17,7 @@ RUN go build -o garg
 FROM alpine
 WORKDIR /app
 
-RUN apk update && \
-  apk add git
+RUN apk add git --no-cache
 
 COPY --from=build /build .
 ENTRYPOINT ["./garg"]
