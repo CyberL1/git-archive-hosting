@@ -10,8 +10,8 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"gopkg.in/src-d/go-git.v4"
-	"gopkg.in/src-d/go-git.v4/plumbing"
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 )
 
 func GetInfoRefs(c *gin.Context) {

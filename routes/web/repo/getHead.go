@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"gopkg.in/src-d/go-git.v4"
+	"github.com/go-git/go-git/v5"
 )
 
 func GetHead(c *gin.Context) {
