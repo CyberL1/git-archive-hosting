@@ -26,6 +26,11 @@ func (h *Handler) RegisterRoutes(r *gin.RouterGroup) {
 	repos.Use(apiMiddlewares.RepositoriesByOwnerMiddleware())
 	repos.GET("/:source/:owner", reposRoutes.GetReposByOwner)
 
-	repos.Use(apiMiddlewares.SingleRepositoryMiddleware())
-	repos.GET("/:source/:owner/:repo", reposRoutes.GetSingleRepo)
+	repo := repos.Group("/:source/:owner/:repo")
+
+	repo.Use(apiMiddlewares.SingleRepositoryMiddleware())
+	repo.GET("/", reposRoutes.GetSingleRepo)
+
+	repo.GET("/contents", reposRoutes.GetRepoContents)
+	repo.GET("/contents/*path", reposRoutes.GetRepoContents)
 }
