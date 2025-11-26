@@ -63,16 +63,18 @@ func GetRepoContents(c *gin.Context) {
 
 	path := strings.Trim(c.Param("path"), "/")
 
-	tree, err = tree.Tree(path)
-	if err != nil {
-		response := types.ApiErrorResponse{
-			Code:    types.ApiErrorCodeNotFound,
-			Message: "Failed to get repository tree at specified path",
-			Error:   err.Error(),
-		}
+	if len(path) > 0 {
+		tree, err = tree.Tree(path)
+		if err != nil {
+			response := types.ApiErrorResponse{
+				Code:    types.ApiErrorCodeNotFound,
+				Message: "Failed to get repository tree at specified path",
+				Error:   err.Error(),
+			}
 
-		c.JSON(500, response)
-		return
+			c.JSON(500, response)
+			return
+		}
 	}
 
 	var contents []types.ApiRepositoryContentsItemResponse

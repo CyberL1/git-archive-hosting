@@ -17,7 +17,6 @@ type ApiRepositoryResponse struct {
 
 type ApiRepositoryContentsItemResponse struct {
 	Name    string `json:"name"`
-	Path    string `json:"path"`
 	Type    string `json:"type"`
 	Size    int64  `json:"size"`
 	Content string `json:"content,omitempty"`
