@@ -1,6 +1,7 @@
 package api
 
 import (
+	apiMiddlewares "garg/middlewares/api"
 	importRoutes "garg/routes/api/import"
 	reposRoutes "garg/routes/api/repos"
 
@@ -18,7 +19,13 @@ func (h *Handler) RegisterRoutes(r *gin.RouterGroup) {
 
 	repos := r.Group("/repos")
 	repos.GET("/", reposRoutes.GetAllRepos)
+
+	repos.Use(apiMiddlewares.RepositoriesBySourceMiddleware())
 	repos.GET("/:source", reposRoutes.GetReposBySource)
+
+	repos.Use(apiMiddlewares.RepositoriesByOwnerMiddleware())
 	repos.GET("/:source/:owner", reposRoutes.GetReposByOwner)
+
+	repos.Use(apiMiddlewares.SingleRepositoryMiddleware())
 	repos.GET("/:source/:owner/:repo", reposRoutes.GetSingleRepo)
 }

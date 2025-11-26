@@ -13,5 +13,7 @@ const (
 	ApiErrorMessageRepositoryUrlRequired  = "Repository URL is required"
 	ApiErrorMessageRepositoryUrlBadSchema = "Repository URL must start with http:// or https://"
 	ApiErrorMessageRepositoryCloneFailed  = "Failed to clone the repository"
+	ApiErrorMessageSourceNotFound         = "Source not found"
+	ApiErrorMessageOwnerNotFound          = "Owner not found"
 	ApiErrorMessageRepositoryNotFound     = "Repository not found"
 )
