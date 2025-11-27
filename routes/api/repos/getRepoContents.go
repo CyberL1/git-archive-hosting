@@ -1,6 +1,7 @@
 package reposRoutes
 
 import (
+	"encoding/base64"
 	"garg/constants"
 	"garg/types"
 	"garg/utils"
@@ -63,34 +64,46 @@ func GetRepoContents(c *gin.Context) {
 
 	path := strings.Trim(c.Param("path"), "/")
 
-	if len(path) > 0 {
-		tree, err = tree.Tree(path)
+	if path == "" {
+		path = "."
+	}
+
+	if path != "." {
+		entry, err := tree.FindEntry(path)
 		if err != nil {
 			response := types.ApiErrorResponse{
 				Code:    types.ApiErrorCodeNotFound,
-				Message: "Failed to get repository tree at specified path",
+				Message: "Failed to find entry at specified path",
 				Error:   err.Error(),
 			}
 
 			c.JSON(500, response)
 			return
 		}
+
+		if entry.Mode.IsFile() {
+			file, _ := tree.File(path)
+			fileContent, _ := file.Contents()
+
+			response := types.ApiRepositoryContentsItemResponse{
+				Name:    entry.Name,
+				Type:    getFileType(entry.Mode),
+				Size:    file.Size,
+				Content: base64.RawStdEncoding.EncodeToString([]byte(fileContent)),
+			}
+
+			c.JSON(200, response)
+			return
+		}
 	}
 
-	var contents []types.ApiRepositoryContentsItemResponse
-	for _, entry := range tree.Entries {
-		var fileType string
-		switch entry.Mode {
-		case filemode.Dir:
-			fileType = "dir"
-		case filemode.Regular:
-			fileType = "file"
-		case filemode.Symlink:
-			fileType = "symlink"
-		default:
-			fileType = "unknown"
-		}
+	if path != "." {
+		tree, _ = tree.Tree(path)
+	}
 
+	var response []types.ApiRepositoryContentsItemResponse
+
+	for _, entry := range tree.Entries {
 		var size int64 = 0
 		if entry.Mode.IsFile() {
 			blob, _ := openRepo.BlobObject(entry.Hash)
@@ -99,12 +112,30 @@ func GetRepoContents(c *gin.Context) {
 
 		item := types.ApiRepositoryContentsItemResponse{
 			Name: entry.Name,
-			Type: fileType,
+			Type: getFileType(entry.Mode),
 			Size: size,
 		}
 
-		contents = append(contents, item)
+		response = append(response, item)
 	}
 
-	c.JSON(200, contents)
+	c.JSON(200, response)
+}
+
+func getFileType(mode filemode.FileMode) string {
+	var fileType string
+	switch mode {
+	case filemode.Dir:
+		fileType = "dir"
+	case filemode.Regular:
+		fileType = "file"
+	case filemode.Symlink:
+		fileType = "symlink"
+	case filemode.Submodule:
+		fileType = "submodule"
+	default:
+		fileType = "unknown"
+	}
+
+	return fileType
 }
