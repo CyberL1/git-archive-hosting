@@ -89,7 +89,7 @@ func GetRepoContents(c *gin.Context) {
 				Name:    entry.Name,
 				Type:    getFileType(entry.Mode),
 				Size:    file.Size,
-				Content: base64.RawStdEncoding.EncodeToString([]byte(fileContent)),
+				Content: base64.StdEncoding.EncodeToString([]byte(fileContent)),
 			}
 
 			c.JSON(200, response)
