@@ -24,7 +24,7 @@ func (g *Git) Import(repo types.Repo) error {
 
 	fmt.Println("Importing repository:", repo.Url)
 
-	cloneOptions := &git.CloneOptions{URL: repo.Url}
+	cloneOptions := &git.CloneOptions{URL: repo.Url, Mirror: true}
 
 	if g.Username != "" && g.Password != "" {
 		cloneOptions.Auth = &http.BasicAuth{
@@ -33,7 +33,7 @@ func (g *Git) Import(repo types.Repo) error {
 		}
 	}
 
-	_, err := git.PlainClone(filepath.Join(constants.RepositoriesDir, strings.ToLower(repoSource), strings.ToLower(repoOwner), utils.AppendDotGitExt(strings.ToLower(repoName))), true, cloneOptions)
+	_, err := git.PlainClone(filepath.Join(constants.RepositoriesDir, strings.ToLower(repoSource), strings.ToLower(repoOwner), utils.AppendDotGitExt(strings.ToLower(repoName))), false, cloneOptions)
 	if err != nil {
 		fmt.Println("Import failed:", err)
 		return err
