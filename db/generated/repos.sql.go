@@ -191,18 +191,3 @@ func (q *Queries) ListReposBySourceAndOwner(ctx context.Context, arg ListReposBy
 	}
 	return items, nil
 }
-
-const setRepoSource = `-- name: SetRepoSource :exec
-UPDATE repos SET source = ?1 WHERE LOWER(owner) = LOWER(?2) AND LOWER(name) = LOWER(?3)
-`
-
-type SetRepoSourceParams struct {
-	Source string
-	Owner  string
-	Name   string
-}
-
-func (q *Queries) SetRepoSource(ctx context.Context, arg SetRepoSourceParams) error {
-	_, err := q.db.ExecContext(ctx, setRepoSource, arg.Source, arg.Owner, arg.Name)
-	return err
-}

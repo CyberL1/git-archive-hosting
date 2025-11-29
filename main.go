@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"garg/constants"
 	dbClient "garg/db"
-	db "garg/db/generated"
 	"garg/frontend"
 	"garg/routes/api"
 	"garg/routes/web"
@@ -19,6 +18,9 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/config"
+	"github.com/go-git/go-git/v5/plumbing"
 )
 
 func main() {
@@ -33,33 +35,46 @@ func main() {
 	// Migrate DB
 	dbClient.Migrate()
 
-	// Migrate repos to the new system (owner/repo -> source/owner/repo)
-	fmt.Println("Migrating repos to the new archive system")
+	// Set non-mirror repos as mirrors
+	fmt.Println("Converting non-mirror repositories to mirrors")
 	client, _ := dbClient.GetClient()
 	repos, _ := client.ListRepos(context.Background())
 
 	for _, repo := range repos {
-		repoSource := strings.Split(repo.OriginalUrl, "/")[2]
+		repoPath := filepath.Join(constants.RepositoriesDir, repo.Source, strings.ToLower(repo.Owner), utils.AppendDotGitExt(strings.ToLower(repo.Name)))
 
-		oldOwnerPath := filepath.Join(constants.RepositoriesDir, strings.ToLower(repo.Owner))
-		newOwnerPath := filepath.Join(constants.RepositoriesDir, repoSource, strings.ToLower(repo.Owner))
-
-		if err := os.MkdirAll(filepath.Join(constants.RepositoriesDir, repoSource), 0755); err != nil {
-			fmt.Printf("Failed to migrate owner %s: %v\n", repo.Owner, err)
+		openRepo, err := git.PlainOpen(repoPath)
+		if err != nil {
+			fmt.Printf("Failed to open repo %s: %v\n", repoPath, err)
 			continue
 		}
 
-		if err := os.Rename(oldOwnerPath, newOwnerPath); err != nil {
-			fmt.Printf("Failed to migrate owner %s: %v\n", repo.Owner, err)
+		origin, _ := openRepo.Remote("origin")
+
+		if origin.Config().Fetch[0] == config.RefSpec("+refs/*:refs/*") && origin.Config().Mirror {
+			fmt.Printf("Skipping %s as it is already a mirror\n", repoPath)
 			continue
 		}
 
-		client.SetRepoSource(context.Background(), db.SetRepoSourceParams{
-			Source: repoSource,
-			Owner:  repo.Owner,
-			Name:   repo.Name,
+		fmt.Printf("Setting %s as a mirror\n", repoPath)
+
+		branches, _ := openRepo.Branches()
+
+		branches.ForEach(func(r *plumbing.Reference) error {
+			openRepo.DeleteBranch(r.Name().Short())
+			return nil
 		})
-		fmt.Printf("Migrated %s\n", repo.Owner)
+
+		openRepo.DeleteRemote(origin.Config().Name)
+
+		newRemote := &config.RemoteConfig{
+			Name:   origin.Config().Name,
+			URLs:   origin.Config().URLs,
+			Fetch:  []config.RefSpec{config.RefSpec("+refs/*:refs/*")},
+			Mirror: true,
+		}
+
+		openRepo.CreateRemote(newRemote)
 	}
 
 	if utils.IsDevMode() {

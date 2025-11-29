@@ -16,6 +16,3 @@ SELECT * FROM repos WHERE LOWER(source) = LOWER(sqlc.arg(source)) AND LOWER(owne
 -- name: CreateRepo :one
 INSERT INTO repos (owner, name, original_url, created_at, source) VALUES (?, ?, ?, ?, ?)
 RETURNING *;
-
--- name: SetRepoSource :exec
-UPDATE repos SET source = :source WHERE LOWER(owner) = LOWER(:owner) AND LOWER(name) = LOWER(:name)
