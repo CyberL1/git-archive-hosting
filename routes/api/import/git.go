@@ -72,7 +72,17 @@ func ImportGitRepo(c *gin.Context) {
 		return
 	}
 
-	c.Status(http.StatusNoContent)
+	response := types.ApiRepositoryResponse{
+		Id:          createdRepo.ID,
+		Owner:       createdRepo.Owner,
+		Name:        createdRepo.Name,
+		CreatedAt:   createdRepo.CreatedAt.String(),
+		OriginalUrl: createdRepo.OriginalUrl,
+		Source:      createdRepo.Source,
+		State:       createdRepo.State,
+	}
+
+	c.JSON(http.StatusOK, response)
 
 	go func() {
 		source := sources.Git{
