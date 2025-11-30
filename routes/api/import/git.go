@@ -74,14 +74,16 @@ func ImportGitRepo(c *gin.Context) {
 
 	c.Status(http.StatusNoContent)
 
-	source := sources.Git{
-		Username: body.Username,
-		Password: body.Password,
-	}
+	go func() {
+		source := sources.Git{
+			Username: body.Username,
+			Password: body.Password,
+		}
 
-	source.Import(types.Repo{
-		Url: body.RepositoryUrl,
-	})
+		source.Import(types.Repo{
+			Url: body.RepositoryUrl,
+		})
 
-	client.UpdateRepoState(context.Background(), db.UpdateRepoStateParams{ID: createdRepo.ID, State: 0})
+		client.UpdateRepoState(context.Background(), db.UpdateRepoStateParams{ID: createdRepo.ID, State: 0})
+	}()
 }
