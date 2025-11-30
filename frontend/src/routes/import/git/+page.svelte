@@ -17,7 +17,8 @@
           body: JSON.stringify({ repositoryUrl, username, password }),
         });
         if (response.ok) {
-          location.href = "/";
+          const json = await response.json();
+          location.href = `/${json.source}/${json.owner}/${json.name}`;
         } else {
           alert(
             "Repository import failed. Please check the URL and try again.",
