@@ -199,3 +199,28 @@ func (q *Queries) ListReposBySourceAndOwner(ctx context.Context, arg ListReposBy
 	}
 	return items, nil
 }
+
+const updateRepoState = `-- name: UpdateRepoState :one
+UPDATE repos SET state = ? WHERE id = ?
+RETURNING id, owner, name, original_url, created_at, source, state
+`
+
+type UpdateRepoStateParams struct {
+	State int64
+	ID    int64
+}
+
+func (q *Queries) UpdateRepoState(ctx context.Context, arg UpdateRepoStateParams) (Repo, error) {
+	row := q.db.QueryRowContext(ctx, updateRepoState, arg.State, arg.ID)
+	var i Repo
+	err := row.Scan(
+		&i.ID,
+		&i.Owner,
+		&i.Name,
+		&i.OriginalUrl,
+		&i.CreatedAt,
+		&i.Source,
+		&i.State,
+	)
+	return i, err
+}

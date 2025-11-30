@@ -16,3 +16,7 @@ SELECT * FROM repos WHERE LOWER(source) = LOWER(sqlc.arg(source)) AND LOWER(owne
 -- name: CreateRepo :one
 INSERT INTO repos (owner, name, original_url, created_at, source, state) VALUES (?, ?, ?, ?, ?, ?)
 RETURNING *;
+
+-- name: UpdateRepoState :one
+UPDATE repos SET state = ? WHERE id = ?
+RETURNING *;

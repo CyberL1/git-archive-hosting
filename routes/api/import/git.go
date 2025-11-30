@@ -51,13 +51,14 @@ func ImportGitRepo(c *gin.Context) {
 	repoOwner := strings.Split(body.RepositoryUrl, "/")[3]
 	repoName := strings.Split(body.RepositoryUrl, "/")[4]
 
-	source := sources.Git{
-		Username: body.Username,
-		Password: body.Password,
-	}
-
-	err := source.Import(types.Repo{
-		Url: body.RepositoryUrl,
+	client, _ := dbClient.GetClient()
+	createdRepo, err := client.CreateRepo(context.Background(), db.CreateRepoParams{
+		Owner:       repoOwner,
+		Name:        utils.RemoveDotGitExt(repoName),
+		OriginalUrl: utils.AppendDotGitExt(body.RepositoryUrl),
+		CreatedAt:   time.Now(),
+		Source:      repoSource,
+		State:       1,
 	})
 
 	if err != nil {
@@ -71,23 +72,16 @@ func ImportGitRepo(c *gin.Context) {
 		return
 	}
 
-	client, _ := dbClient.GetClient()
-	createdRepo, _ := client.CreateRepo(context.Background(), db.CreateRepoParams{
-		Owner:       repoOwner,
-		Name:        utils.RemoveDotGitExt(repoName),
-		OriginalUrl: utils.AppendDotGitExt(body.RepositoryUrl),
-		CreatedAt:   time.Now(),
-		Source:      repoSource,
-	})
+	c.Status(http.StatusNoContent)
 
-	response := types.ApiRepositoryResponse{
-		Id:          createdRepo.ID,
-		Owner:       createdRepo.Owner,
-		Name:        createdRepo.Name,
-		CreatedAt:   createdRepo.CreatedAt.String(),
-		OriginalUrl: createdRepo.OriginalUrl,
-		Source:      createdRepo.Source,
+	source := sources.Git{
+		Username: body.Username,
+		Password: body.Password,
 	}
 
-	c.JSON(http.StatusOK, response)
+	source.Import(types.Repo{
+		Url: body.RepositoryUrl,
+	})
+
+	client.UpdateRepoState(context.Background(), db.UpdateRepoStateParams{ID: createdRepo.ID, State: 0})
 }
