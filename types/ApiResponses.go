@@ -13,6 +13,7 @@ type ApiRepositoryResponse struct {
 	CreatedAt   string `json:"createdAt"`
 	OriginalUrl string `json:"originalUrl"`
 	Source      string `json:"source"`
+	State       int64  `json:"state"`
 }
 
 type ApiRepositoryContentsItemResponse struct {

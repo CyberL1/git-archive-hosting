@@ -11,8 +11,8 @@ import (
 )
 
 const createRepo = `-- name: CreateRepo :one
-INSERT INTO repos (owner, name, original_url, created_at, source) VALUES (?, ?, ?, ?, ?)
-RETURNING id, owner, name, original_url, created_at, source
+INSERT INTO repos (owner, name, original_url, created_at, source, state) VALUES (?, ?, ?, ?, ?, ?)
+RETURNING id, owner, name, original_url, created_at, source, state
 `
 
 type CreateRepoParams struct {
@@ -21,6 +21,7 @@ type CreateRepoParams struct {
 	OriginalUrl string
 	CreatedAt   time.Time
 	Source      string
+	State       int64
 }
 
 func (q *Queries) CreateRepo(ctx context.Context, arg CreateRepoParams) (Repo, error) {
@@ -30,6 +31,7 @@ func (q *Queries) CreateRepo(ctx context.Context, arg CreateRepoParams) (Repo, e
 		arg.OriginalUrl,
 		arg.CreatedAt,
 		arg.Source,
+		arg.State,
 	)
 	var i Repo
 	err := row.Scan(
@@ -39,12 +41,13 @@ func (q *Queries) CreateRepo(ctx context.Context, arg CreateRepoParams) (Repo, e
 		&i.OriginalUrl,
 		&i.CreatedAt,
 		&i.Source,
+		&i.State,
 	)
 	return i, err
 }
 
 const getRepoByFullName = `-- name: GetRepoByFullName :one
-SELECT id, owner, name, original_url, created_at, source FROM repos WHERE LOWER(source) = LOWER(?1) AND LOWER(owner) = LOWER(?2) AND LOWER(name) = LOWER(?3)
+SELECT id, owner, name, original_url, created_at, source, state FROM repos WHERE LOWER(source) = LOWER(?1) AND LOWER(owner) = LOWER(?2) AND LOWER(name) = LOWER(?3)
 `
 
 type GetRepoByFullNameParams struct {
@@ -63,12 +66,13 @@ func (q *Queries) GetRepoByFullName(ctx context.Context, arg GetRepoByFullNamePa
 		&i.OriginalUrl,
 		&i.CreatedAt,
 		&i.Source,
+		&i.State,
 	)
 	return i, err
 }
 
 const getRepoById = `-- name: GetRepoById :one
-SELECT id, owner, name, original_url, created_at, source FROM repos WHERE id = ?
+SELECT id, owner, name, original_url, created_at, source, state FROM repos WHERE id = ?
 `
 
 func (q *Queries) GetRepoById(ctx context.Context, id int64) (Repo, error) {
@@ -81,12 +85,13 @@ func (q *Queries) GetRepoById(ctx context.Context, id int64) (Repo, error) {
 		&i.OriginalUrl,
 		&i.CreatedAt,
 		&i.Source,
+		&i.State,
 	)
 	return i, err
 }
 
 const listRepos = `-- name: ListRepos :many
-SELECT id, owner, name, original_url, created_at, source FROM repos
+SELECT id, owner, name, original_url, created_at, source, state FROM repos
 `
 
 func (q *Queries) ListRepos(ctx context.Context) ([]Repo, error) {
@@ -105,6 +110,7 @@ func (q *Queries) ListRepos(ctx context.Context) ([]Repo, error) {
 			&i.OriginalUrl,
 			&i.CreatedAt,
 			&i.Source,
+			&i.State,
 		); err != nil {
 			return nil, err
 		}
@@ -120,7 +126,7 @@ func (q *Queries) ListRepos(ctx context.Context) ([]Repo, error) {
 }
 
 const listReposBySource = `-- name: ListReposBySource :many
-SELECT id, owner, name, original_url, created_at, source FROM repos WHERE LOWER(source) = LOWER(?1)
+SELECT id, owner, name, original_url, created_at, source, state FROM repos WHERE LOWER(source) = LOWER(?1)
 `
 
 func (q *Queries) ListReposBySource(ctx context.Context, source string) ([]Repo, error) {
@@ -139,6 +145,7 @@ func (q *Queries) ListReposBySource(ctx context.Context, source string) ([]Repo,
 			&i.OriginalUrl,
 			&i.CreatedAt,
 			&i.Source,
+			&i.State,
 		); err != nil {
 			return nil, err
 		}
@@ -154,7 +161,7 @@ func (q *Queries) ListReposBySource(ctx context.Context, source string) ([]Repo,
 }
 
 const listReposBySourceAndOwner = `-- name: ListReposBySourceAndOwner :many
-SELECT id, owner, name, original_url, created_at, source FROM repos WHERE LOWER(source) = LOWER(?1) AND LOWER(owner) = LOWER(?2)
+SELECT id, owner, name, original_url, created_at, source, state FROM repos WHERE LOWER(source) = LOWER(?1) AND LOWER(owner) = LOWER(?2)
 `
 
 type ListReposBySourceAndOwnerParams struct {
@@ -178,6 +185,7 @@ func (q *Queries) ListReposBySourceAndOwner(ctx context.Context, arg ListReposBy
 			&i.OriginalUrl,
 			&i.CreatedAt,
 			&i.Source,
+			&i.State,
 		); err != nil {
 			return nil, err
 		}
